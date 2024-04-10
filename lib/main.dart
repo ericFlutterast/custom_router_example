@@ -1,37 +1,29 @@
-import 'package:deeplinks_app/ui/cart_screen.dart';
-import 'package:deeplinks_app/ui/item_details_screen.dart';
-import 'package:deeplinks_app/ui/item_list_screen.dart';
-import 'package:deeplinks_app/ui/unknown_screen.dart';
+import 'package:deeplinks_app/custom_router/custom_router_delegate.dart';
+import 'package:deeplinks_app/custom_router/custom_router_parser.dart';
+import 'package:deeplinks_app/custom_router/navigation_state.dart';
 import 'package:flutter/material.dart';
 
-import 'domain/models/routes.dart';
-
-void main() => runApp(const MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
+  final _routerDelegate = CustomRouterDelegate(
+    state: CustomNavigationState.root(),
+  );
+  final _routerInformationParser = CustomRouterInformationParser();
+
+  //Миграция на навигатор 2.0
+  //MaterialApp -> MaterialApp.router
+  //RouterDelegate<T>
+  //RouterParser
+  //T = something navigationState
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Онлайн магазин',
-      initialRoute: Routes.root,
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case Routes.root:
-            return MaterialPageRoute(builder: (_) => ItemListScreen());
-          case Routes.item:
-            return MaterialPageRoute(
-                builder: (_) =>
-                    ItemDetailsScreen(itemId: settings.arguments as String));
-          case Routes.cart:
-            return MaterialPageRoute(builder: (_) => const CartScreen());
-          case Routes.unknown:
-            MaterialPageRoute(builder: (_) => UnknownScreen(settings.name));
-        }
-
-        return null;
-      },
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      routerDelegate: _routerDelegate,
+      routeInformationParser: _routerInformationParser,
     );
   }
 }

@@ -2,9 +2,16 @@ import 'package:deeplinks_app/domain/items_repository.dart';
 import 'package:flutter/material.dart';
 
 class ItemListScreen extends StatelessWidget {
-  final items = ItemsRepository.getItems();
+  ItemListScreen({
+    super.key,
+    required this.onTapToCart,
+    required this.onTapToItemDetails,
+  });
 
-  ItemListScreen({super.key});
+  final void Function() onTapToCart;
+  final void Function(String itemId) onTapToItemDetails;
+
+  final items = ItemsRepository.getItems();
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +21,7 @@ class ItemListScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.pushNamed(context, '/cart');
-            },
+            onPressed: onTapToCart,
           ),
         ],
       ),
@@ -26,11 +31,7 @@ class ItemListScreen extends StatelessWidget {
           final item = items[index];
           return GestureDetector(
             onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/item',
-                arguments: item.id,
-              );
+              onTapToItemDetails(item.id);
             },
             child: Container(
               height: 100,
@@ -56,8 +57,7 @@ class ItemListScreen extends StatelessWidget {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 20),
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
